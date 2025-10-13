@@ -1,0 +1,36 @@
+# API
+fastapi
+uvicorn[standard]
+
+# ML & Data
+numpy
+pandas
+scikit-learn
+catboost
+joblib
+scipy
+
+# Visualization
+matplotlib
+seaborn
+plotly
+
+# Database
+SQLAlchemy
+
+
+# Web Frontend
+streamlit
+
+# Testing
+pytest
+pytest-cov
+
+# Utility
+python-dotenv
+pydantic
+
+# Optional (для удобной работы с Jupyter)
+jupyter
+notebook
+
