@@ -1,8 +1,11 @@
 from sqlalchemy import create_engine, Column, Integer, Float, String, Boolean, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
+from urllib.parse import quote_plus
 
-DATABASE_URL = "postgresql://user:danielDaniel1907!@localhost:5432/credit_db"
+# твой пароль с !
+
+DATABASE_URL = "postgresql+pg8000://postgres:danielDaniel1907!@localhost:5432/credit_app"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -25,3 +28,10 @@ class CreditApplication(Base):
     model_score = Column(Float)
     approved = Column(Boolean)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

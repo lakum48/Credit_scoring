@@ -12,4 +12,4 @@ class ClientData(BaseModel):
     loan_int_rate: Optional[float] = None      # теперь не обязателен
     loan_percent_income: Optional[float] = None
     cb_person_default_on_file: Optional[str] = None
-    cb_person_cred_hist_length: Optional[float] = None
+    cb_person_cred_hist_length: Optional[int] = None
