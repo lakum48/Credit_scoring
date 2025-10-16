@@ -14,22 +14,39 @@
 ## 📂 Структура проекта
 
 Credit_scoring/
+
 ├─ 📁 backend/ 
+
 │ ├─ src/ 
+
 │ ├─ service.py 
+
 │ └─ requirements.txt 
+
 ├─ 📁 frontend/ 
+
 │ ├─ app.py 
+
 │ └─ requirements.txt
+
 ├─ 📁 data/
+
 │ └─ raw/ 
+
 ├─ 📁 model_training/ модели
+
 │ ├─ data_preprocessing.py
+
 │ ├─ train_model.py
+
 │ └─ utils.py
+
 ├─ 🐳 Dockerfile.backend 
+
 ├─ 🐳 Dockerfile.frontend 
+
 ├─ 🐳 docker-compose.yml 
+
 └─ 📄 README.md 
 
 ---
