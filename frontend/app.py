@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
+import os
 
 st.set_page_config(page_title="Loan Approval Predictor", layout="centered")
 
@@ -45,7 +46,9 @@ if submitted:
 
     # Отправляем данные на ваш API
     try:
-        response = requests.post("http://localhost:8000/score", json=data)
+        BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:8000") + "/score"
+        response = requests.post(BACKEND_URL, json=data)
+
         if response.status_code == 200:
             result = response.json()
             st.subheader("Результат предсказания")

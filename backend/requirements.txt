@@ -2,13 +2,15 @@
 fastapi
 uvicorn[standard]
 pg8000
-pydantic
+
 
 # ML & Data
 numpy
 pandas
 scikit-learn
+imblearn
 catboost
+lightgbm
 joblib
 scipy
 
@@ -22,7 +24,7 @@ SQLAlchemy
 
 
 # Web Frontend
-streamlit
+requests
 
 # Testing
 pytest

@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: credit_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: danielDaniel1907!
+      POSTGRES_DB: credit_app
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: credit_backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+pg8000://postgres:danielDaniel1907!@db:5432/credit_app
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: credit_frontend
+    restart: always
+    depends_on:
+      - backend
+    environment:
+    - STREAMLIT_SERVER_HEADLESS=true
+    - STREAMLIT_SERVER_PORT=8501
+    - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    - BACKEND_URL=http://backend:8000
+    ports:
+      - "8501:8501"
+
+volumes:
+  pgdata:

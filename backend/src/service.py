@@ -7,10 +7,15 @@ import pandas as pd
 from database import CreditApplication, get_db
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
+from database import Base, engine
 
 
 
 app = FastAPI()
+
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
 
 
 @app.post("/score")

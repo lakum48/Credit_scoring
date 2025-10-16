@@ -1,15 +1,25 @@
+# database.py
+import os
 from sqlalchemy import create_engine, Column, Integer, Float, String, Boolean, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
-from urllib.parse import quote_plus
 
-# твой пароль с !
+# Берем переменную окружения DATABASE_URL, если она есть
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+pg8000://postgres:danielDaniel1907!@localhost:5432/credit_app"
+)
 
-DATABASE_URL = "postgresql+pg8000://postgres:danielDaniel1907!@localhost:5432/credit_app"
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
+# Создаем движок SQLAlchemy
+engine = create_engine(DATABASE_URL, echo=True)  # echo=True для логов SQL (можно убрать)
+
+# Сессии для работы с БД
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Базовый класс для моделей
 Base = declarative_base()
 
+# Модель таблицы заявок
 class CreditApplication(Base):
     __tablename__ = "applications"
 
@@ -29,9 +39,18 @@ class CreditApplication(Base):
     approved = Column(Boolean)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
+# Функция для получения сессии БД
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+# Создаем таблицы (можно запускать один раз при старте backend)
+def init_db():
+    Base.metadata.create_all(bind=engine)
+
+if __name__ == "__main__":
+    init_db()
+    print("База данных и таблицы созданы!")

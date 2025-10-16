@@ -1,0 +1,26 @@
+# API
+fastapi
+uvicorn[standard]
+pg8000
+
+
+
+# ML & Data
+numpy
+pandas
+
+
+
+# Web Frontend
+streamlit
+requests
+
+# Testing
+pytest
+pytest-cov
+
+# Utility
+python-dotenv
+pydantic
+
+
