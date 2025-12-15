@@ -3,7 +3,8 @@ import pandas as pd
 import os
 import joblib
 
-from sklearn.metrics import  precision_score, recall_score,  f1_score
+from sklearn.metrics import  precision_score, recall_score,  f1_score, confusion_matrix
+from sklearn.model_selection import cross_val_predict
 
 from preprocess import preprocess_data
 
@@ -26,6 +27,7 @@ def train_model():
     print(f1_score(y_test, predict))
     print(recall_score(y_test, predict))
     print(precision_score(y_test, predict))
+    print(confusion_matrix(y_test, predict))
 
     joblib.dump(final_model, 'CatBoost_model.pkl')
 
