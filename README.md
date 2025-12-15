@@ -1,108 +1,99 @@
-# Credit Scoring Project 
+# Credit Scoring Project
 
-**Описание**  
-Проект реализует систему кредитного скоринга для оценки вероятности дефолта клиентов. Используется машинное обучение для предсказания риска невозврата кредита.  
+Модель кредитного скоринга + REST API на FastAPI + два клиента: web (Streamlit) и мобильный Flutter.
 
-**Метрики модели:**  
-- Recall = 0.82 
-- Precision = 0.82 
-
-Эти показатели позволяют эффективно идентифицировать проблемных заемщиков и минимизировать ложные срабатывания.
+**Метрики модели**  
+- Recall = 0.82  
+- Precision = 0.82  
 
 ---
 
-## 📂 Структура проекта
-
-Credit_scoring/
-
-├─ 📁 backend/ 
-
-│ ├─ src/ 
-
-│ ├─ service.py 
-
-│ └─ requirements.txt 
-
-├─ 📁 frontend/ 
-
-│ ├─ app.py 
-
-│ └─ requirements.txt
-
-├─ 📁 data/
-
-│ └─ raw/ 
-
-├─ 📁 model_training/ модели
-
-│ ├─ data_preprocessing.py
-
-│ ├─ train_model.py
-
-│ └─ utils.py
-
-├─ 🐳 Dockerfile.backend 
-
-├─ 🐳 Dockerfile.frontend 
-
-├─ 🐳 docker-compose.yml 
-
-└─ 📄 README.md 
+## 📂 Структура
+```
+credit_scoring_app/
+├─ backend/
+│  ├─ src/
+│  │  ├─ service.py          # FastAPI: /score, /applications, /register, /login, CORS
+│  │  ├─ predict.py          # загрузка модели, predict/predict_proba
+│  │  ├─ data_models.py      # схема входных данных
+│  │  ├─ database.py         # SQLAlchemy (Postgres), таблицы applications, users
+│  │  └─ ...
+│  └─ requirements.txt
+├─ frontend/
+│  └─ app.py                 # Streamlit UI (старый веб-клиент)
+├─ mobile_flutter/           # Новый мобильный/веб клиент на Flutter
+│  ├─ pubspec.yaml
+│  └─ lib/
+│     ├─ main.dart           # навигация: Скоринг / История / Профиль
+│     ├─ core/               # http client, config
+│     ├─ features/predict    # форма ввода, вызов /score
+│     ├─ features/history    # список заявок с /applications
+│     └─ features/auth       # регистрация/логин через /register /login
+├─ data/                     # данные
+├─ model_training/           # ноутбуки и артефакты обучения
+├─ Dockerfile.backend
+├─ Dockerfile.frontend
+└─ docker-compose.yml
+```
 
 ---
 
-
-###  Пояснения
-- **backend/** – API, которое принимает данные клиента и возвращает прогноз вероятности дефолта.  
-- **frontend/** – удобный интерфейс для ввода данных и отображения прогнозов.  
-- **data/raw/** – исходные данные, на которых обучалась модель.  
-- **model_training/** – скрипты подготовки данных, обучения модели и сохранения результатов.  
-- **Dockerfile** и **docker-compose.yml** – для быстрого развертывания проекта локально или на сервере.  
+## 🔌 API
+- `POST /score` — принять данные клиента, вернуть `approved`, `probability`, `id`; пишет в таблицу `applications`.
+- `GET /applications?limit=50` — история заявок (последние).
+- `POST /register` — простая регистрация, возвращает токен.
+- `POST /login` — логин, возвращает токен.
+Все эндпоинты с включённым CORS (по умолчанию `allow_origins=["*"]`, сузьте в проде).
 
 ---
 
-##  Требования
-
+## 🛠 Требования
 - Python 3.10+  
-- Docker и Docker Compose  
-- Основные библиотеки Python: `pandas`, `scikit-learn`, `numpy`, `matplotlib`, `seaborn`, `fastapi`/`flask` (можно установить при запуске приложения)  
+- Postgres (по умолчанию `postgresql+pg8000://postgres:danielDaniel1907!@localhost:5432/credit_app`, настраивается через `DATABASE_URL`)
+- Установки: `pip install -r backend/requirements.txt` + `pip install "pydantic[email]" email-validator`
+- Flutter 3.3+ (для mobile_flutter)
 
 ---
 
-##  Установка и запуск
-
-### 1️⃣ Клонирование репозитория
+## 🚀 Запуск backend (локально без Docker)
 ```bash
-git clone https://github.com/lakum48/Credit_scoring.git
-cd Credit_scoring
-```
-### 2️⃣ Запуск через Docker Compose
-```bash
-docker-compose up --build
-```
-### 3️⃣ Локальный запуск (без Docker)
-#### Backend:
-```bash
-Копировать код
-cd backend
+cd credit_scoring_app/backend
 pip install -r requirements.txt
+pip install "pydantic[email]" email-validator   # для EmailStr
 cd src
-uvicorn service:app
+uvicorn service:app --reload --host 0.0.0.0 --port 8000
 ```
-#### Frontend:
+
+---
+
+## 🌐 Запуск старого веб-клиента (Streamlit)
 ```bash
-Копировать код
-cd frontend
+cd credit_scoring_app/frontend
 pip install -r requirements.txt
 streamlit run app.py
 ```
-###  Метрики и визуализация
-####  Recall: 0.82
-#### Precision: 0.82
 
-#### Precision-recall curve:
-![alt text](image-1.png)
+---
 
+## 📱 Запуск Flutter клиента
+```bash
+cd credit_scoring_app/mobile_flutter
+flutter pub get
+# web/dev
+flutter run -d chrome
+# android/ios — выбрать устройство/эмулятор
+```
+В `lib/core/config.dart` укажите `apiBaseUrl` на хост, где крутится backend (не 127.0.0.1, если устройство другое).
 
+---
 
+## 🧠 Модель
+- Артефакт: `backend/src/stacking_model.pkl`
+- Логика: `predict.py` пытается использовать `predict_proba`, иначе `predict`.
 
+---
+
+## 📊 Метрики и визуализация
+- Recall: 0.82
+- Precision: 0.82
+- PR-кривая: `image-1.png`
